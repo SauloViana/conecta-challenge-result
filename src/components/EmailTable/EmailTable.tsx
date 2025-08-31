@@ -1,4 +1,7 @@
+'use client';
+
 import { emailsData } from '@/data/emailsData';
+import EmailCell from './EmailCell'
 
 const EmailTable: React.FC = () => {
   return (
@@ -11,15 +14,15 @@ const EmailTable: React.FC = () => {
         </tr>
       </thead>
       <tbody>
-        {emailsData.map((email, index) => (
-          <tr key={index}>
-            <td className='border p-2 w-1/5'>{email.sender}</td>
-            <td className='border p-2 w-1/5 overflow-hidden '>
-              <div className='w-10'>{email.recipients}</div>
-            </td>
-            <td className='border p-2 w-3/5'>{email.message}</td>
-          </tr>
-        ))}
+        {emailsData.map((email, index) => {
+          return (
+            <tr key={index}>
+              <td className='border p-2 w-1/5'>{email.sender}</td>
+              <EmailCell recipients={email.recipients} />
+              <td className='border p-2 w-3/5'>{email.message}</td>
+            </tr>
+          );
+        })}
       </tbody>
     </table>
   );
