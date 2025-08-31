@@ -1,5 +1,3 @@
-'use client';
-
 import { emailsData } from '@/data/emailsData';
 import EmailCell from './EmailCell'
 

@@ -1,6 +1,7 @@
 'use client';
 
-import { useRef, useEffect, useState } from 'react';
+import { useRef, useEffect, useState, TdHTMLAttributes } from 'react';
+import { Tooltip } from '@material-tailwind/react';
 
 /**
  * Componente para tratar uma célula da tabela com muitos emails
@@ -8,16 +9,16 @@ import { useRef, useEffect, useState } from 'react';
  * @returns td
  */
 const EmailCell: React.FC<{ recipients: string }> = ({ recipients }) => {
-    const containerRef = useRef<HTMLDivElement>(null);
+    const containerRef = useRef<HTMLTableCellElement>(null);
     const [visible, setVisible] = useState<string[]>([]);
     const [hiddenCount, setHiddenCount] = useState(0);
-    const emails = recipients.split(',').map(r => r.trim());
 
     useEffect(() => {
         const elementDOM = containerRef.current;
         if (!elementDOM) return;
 
         const calculateVisible = () => {
+            const emails = recipients.split(',').map(r => r.trim());
             const shown: string[] = [];
             let hidden = 0;
             let totalWidth = 0;
@@ -49,19 +50,21 @@ const EmailCell: React.FC<{ recipients: string }> = ({ recipients }) => {
         calculateVisible();
         window.addEventListener('resize', calculateVisible);
         return () => window.removeEventListener('resize', calculateVisible);
-    }, [emails]);
+    }, [recipients]);
 
     return (
-        <td className='border p-2 w-1/5 overflow-hidden'>
-            <div ref={containerRef} className='truncate'>
-                {visible.join(', ')}
-                {hiddenCount > 0 && (
-                    <span title={`+${hiddenCount} e-mail${hiddenCount > 1 ? 's' : ''}`}>
-                        …
-                    </span>
-                )}
-            </div>
-        </td>
+        <Tooltip
+            ref={containerRef}
+            content={`+${hiddenCount} e-mail${hiddenCount > 1 ? 's' : ''}`}
+            open={hiddenCount > 0 ? null : false}
+            placement="right">
+            <td className='border p-2 w-1/5 overflow-hidden'>
+                <div className='truncate'>
+                    {visible.join(', ')}
+                    {hiddenCount > 0 && (<>{visible.length > 0 ? ',' : ''}...</>)}
+                </div>
+            </td>
+        </Tooltip>
     );
 }
 
